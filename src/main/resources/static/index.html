@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SSE Demo</title>
+</head>
+<body>
+<h1>SSE Demo</h1>
+
+<div id="msg"></div>
+
+<script>
+    if (window.EventSource == null) {
+        alert('The browser does not support Server-Sent Events');
+    } else {
+        var eventSource = new EventSource('/sse/mvc/words');
+
+        var msgTag = document.getElementById("msg");
+
+        eventSource.onopen = function () {
+            console.log('connection is established');
+        };
+
+        eventSource.onerror = function (error) {
+            console.log('connection state: ' + eventSource.readyState + ', error: ' + event);
+        };
+
+        eventSource.onmessage = function (event) {
+            console.log('id: ' + event.lastEventId + ', data: ' + event.data);
+            msgTag.innerHTML += 'id: ' + event.lastEventId + ', data: ' + event.data +"<br/>";
+            if (event.data.endsWith('.')) {
+                eventSource.close();
+                console.log('connection is closed');
+            }
+        };
+    }
+</script>
+</body>
+</html>
